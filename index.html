@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfólio — Publicidade & Propaganda</title>
+<meta name="description" content="Portfólio de publicidade, campanhas, vídeo e direção de arte.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>''
+
+<div class="particulas"></div>
+
+<div class="preview-flutuante" id="previewFlutuante" aria-hidden="true"></div>
+
+<header class="topo">
+  <a href="#topo" class="topo-marca" id="marcaNome">Carregando…</a>
+  <nav class="topo-menu">
+    <a href="#sobre">Sobre</a>
+    <a href="#trabalhos">Trabalhos</a>
+    <a href="#contato">Contato</a>
+  </nav>
+  <a href="#" class="topo-drive" id="botaoDriveTopo" target="_blank" rel="noopener">Acervo completo ↗</a>
+  <button class="topo-hamburguer" id="botaoMenuMobile" aria-label="Abrir menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<nav class="menu-mobile" id="menuMobile">
+  <a href="#sobre">Sobre</a>
+  <a href="#trabalhos">Trabalhos</a>
+  <a href="#contato">Contato</a>
+  <a href="#" id="botaoDriveMobile" target="_blank" rel="noopener">Acervo completo ↗</a>
+</nav>
+
+<main id="topo">
+
+  <section class="hero">
+    <div class="hero-fundo" id="heroFundo"></div>
+    <div class="hero-conteudo">
+      <p class="hero-eyebrow">Portfólio de publicidade & propaganda</p>
+      <h1 class="hero-nome" id="heroNome">—</h1>
+      <p class="hero-tagline" id="heroTagline">—</p>
+      <a href="#trabalhos" class="hero-cta">Ver trabalhos<span class="seta-baixo">↓</span></a>
+    </div>
+    <div class="hero-marquee" aria-hidden="true">
+      <div class="hero-marquee-trilha" id="marqueeTrilha"></div>
+    </div>
+  </section>
+
+  <section id="sobre" class="secao sobre">
+    <div class="sobre-grade">
+      <div class="sobre-foto">
+        <img id="sobreFoto" src="" alt="Foto" loading="lazy">
+      </div>
+      <div class="sobre-texto">
+        <p class="secao-eyebrow" id="sobreEyebrow">Sobre</p>
+        <p class="sobre-paragrafo" id="sobreParagrafo">—</p>
+        <ul class="sobre-servicos" id="sobreServicos"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="trabalhos" class="secao trabalhos">
+    <p class="secao-eyebrow">Trabalhos</p>
+    <h2 class="secao-titulo">Projetos selecionados</h2>
+
+    <div class="filtros" id="filtros">
+      <button class="filtro-botao ativo" data-categoria="todos">Todos</button>
+    </div>
+
+    <ul class="lista-trabalhos" id="listaTrabalhos">
+      <li class="trabalhos-vazio">Carregando projetos…</li>
+    </ul>
+  </section>
+
+  <section id="contato" class="secao contato">
+    <p class="secao-eyebrow">Contato</p>
+    <h2 class="secao-titulo">Vamos criar sua próxima campanha</h2>
+
+    <div class="contato-grade">
+      <form class="contato-form" id="formularioContato">
+        <div class="grupo-form">
+          <input type="text" placeholder="Seu nome" id="campoNome" required>
+        </div>
+        <div class="grupo-form">
+          <input type="text" placeholder="Empresa / marca" id="campoEmpresa">
+        </div>
+        <div class="grupo-form">
+          <textarea placeholder="Conte um pouco sobre o projeto" rows="5" id="campoMensagem" required></textarea>
+        </div>
+        <button type="submit" class="botao-form">Enviar por WhatsApp</button>
+      </form>
+
+      <div class="contato-lateral">
+        <a href="#" class="contato-drive-card" id="botaoDriveContato" target="_blank" rel="noopener">
+          <span class="contato-drive-titulo">Acervo completo</span>
+          <span class="contato-drive-sub">Todas as fotos e vídeos, organizados por projeto, no Google Drive.</span>
+          <span class="contato-drive-seta">↗</span>
+        </a>
+        <div class="contato-links">
+          <a href="#" id="linkEmail">—</a>
+          <a href="#" id="linkInstagram" target="_blank" rel="noopener">Instagram ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="rodape">
+  <span id="rodapeNome">—</span>
+  <span id="rodapeAno">—</span>
+</footer>
+
+<!-- Lightbox / modal de projeto -->
+<div class="modal" id="modalProjeto" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-conteudo">
+    <button class="modal-fechar" id="modalFechar" aria-label="Fechar">✕</button>
+    <div class="modal-imagem" id="modalImagem"></div>
+    <div class="modal-info">
+      <p class="modal-categoria" id="modalCategoria">—</p>
+      <h3 class="modal-titulo" id="modalTitulo">—</h3>
+      <p class="modal-descricao" id="modalDescricao">—</p>
+      <div class="modal-acoes">
+        <a href="#" class="modal-botao" id="modalDriveLink" target="_blank" rel="noopener">Ver galeria completa ↗</a>
+        <a href="#" class="modal-botao modal-botao-secundario" id="modalVideoLink" target="_blank" rel="noopener">Assistir vídeo ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="js/config.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

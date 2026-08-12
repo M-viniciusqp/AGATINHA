@@ -1,0 +1,231 @@
+.admin-body {
+  background-color: var(--escuro);
+}
+
+/* ---------- LOGIN ---------- */
+.admin-login {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.admin-login-caixa {
+  width: 100%;
+  max-width: 380px;
+  background: var(--vidro);
+  border: var(--borda);
+  backdrop-filter: blur(14px);
+  border-radius: var(--raio);
+  padding: 3rem 2.5rem;
+  box-shadow: 0 30px 60px rgba(79, 70, 229, 0.2);
+}
+
+.admin-login-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--primario), var(--secundario));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.admin-login-titulo {
+  font-family: var(--fonte-display);
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--claro);
+}
+
+.admin-login-erro {
+  color: #f87171;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  min-height: 1.2em;
+}
+
+/* ---------- PAINEL ---------- */
+.admin-topo {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: var(--borda);
+}
+
+.admin-topo-titulo {
+  font-family: var(--fonte-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--claro);
+}
+
+.admin-topo-acoes {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--claro-fraco);
+}
+.admin-topo-acoes a:hover { color: var(--claro); }
+
+.admin-botao-sair {
+  background: var(--vidro);
+  border: var(--borda);
+  color: var(--claro);
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: border-color 0.3s ease;
+}
+.admin-botao-sair:hover { border-color: var(--secundario); }
+
+.admin-conteudo {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.admin-cartao {
+  background: var(--vidro);
+  border-radius: var(--raio);
+  padding: 2.5rem;
+  border: var(--borda);
+  backdrop-filter: blur(10px);
+}
+
+.admin-cartao-titulo {
+  font-family: var(--fonte-display);
+  font-size: 1.35rem;
+  margin-bottom: 1.75rem;
+  color: var(--claro);
+}
+
+.admin-form-linha {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.admin-form-linha-final { align-items: center; }
+
+.grupo-form-checkbox label {
+  text-transform: none;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--claro);
+}
+
+.admin-dica {
+  font-size: 0.78rem;
+  color: var(--claro-fraco);
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+.admin-dica a { color: var(--secundario); text-decoration: underline; }
+
+.admin-preview-imagem {
+  margin-top: 0.75rem;
+  width: 180px;
+  aspect-ratio: 4/3;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--vidro);
+  border: var(--borda);
+}
+.admin-preview-imagem img { width: 100%; height: 100%; object-fit: cover; }
+
+.admin-form-acoes {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.admin-botao-cancelar {
+  background: none;
+  border: none;
+  color: var(--claro-fraco);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: underline;
+}
+.admin-botao-cancelar:hover { color: var(--claro); }
+
+.admin-form-status {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--claro-fraco);
+}
+
+/* ---------- LISTA DE PROJETOS ---------- */
+.admin-lista { display: flex; flex-direction: column; }
+
+.admin-lista-item {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 0;
+  border-top: var(--borda);
+}
+.admin-lista-item:last-child { border-bottom: var(--borda); }
+
+.admin-lista-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--vidro);
+  border: var(--borda);
+}
+
+.admin-lista-info-titulo {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--claro);
+}
+.admin-lista-info-sub {
+  font-size: 0.8rem;
+  color: var(--claro-fraco);
+}
+
+.admin-lista-acoes { display: flex; gap: 0.75rem; }
+.admin-lista-acoes button {
+  background: var(--vidro);
+  border: var(--borda);
+  color: var(--claro-fraco);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+.admin-lista-acoes button:hover { border-color: var(--secundario); color: var(--claro); }
+.admin-lista-acoes .excluir:hover { border-color: #f87171; color: #f87171; }
+
+.admin-lista-vazio { color: var(--claro-fraco); padding: 1rem 0; }
+
+@media (max-width: 640px) {
+  .admin-form-linha { grid-template-columns: 1fr; }
+  .admin-lista-item { grid-template-columns: 48px 1fr; }
+  .admin-lista-acoes { grid-column: 1 / -1; }
+}
