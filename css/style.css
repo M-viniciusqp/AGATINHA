@@ -129,20 +129,6 @@ button { font-family: inherit; cursor: pointer; }
 .topo-menu a:hover { color: var(--claro); }
 .topo-menu a:hover::after { width: 100%; }
 
-.topo-drive {
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 0.6rem 1.2rem;
-  border: var(--borda);
-  border-radius: 999px;
-  color: var(--claro);
-  transition: all 0.3s ease;
-}
-.topo-drive:hover {
-  background: linear-gradient(45deg, var(--primario), var(--secundario));
-  border-color: transparent;
-}
-
 .topo-hamburguer {
   display: none;
   flex-direction: column;
@@ -511,37 +497,6 @@ button { font-family: inherit; cursor: pointer; }
   gap: 1.5rem;
 }
 
-.contato-drive-card {
-  display: block;
-  padding: 2rem;
-  background: var(--vidro);
-  border: var(--borda);
-  backdrop-filter: blur(10px);
-  color: var(--claro);
-  border-radius: var(--raio);
-  position: relative;
-  transition: border-color 0.3s ease;
-}
-.contato-drive-card:hover { border-color: var(--secundario); }
-.contato-drive-titulo {
-  display: block;
-  font-family: var(--fonte-display);
-  font-size: 1.35rem;
-  margin-bottom: 0.5rem;
-}
-.contato-drive-sub {
-  display: block;
-  font-size: 0.85rem;
-  color: var(--claro-fraco);
-  max-width: 30ch;
-}
-.contato-drive-seta {
-  position: absolute;
-  top: 2rem; right: 2rem;
-  font-size: 1.5rem;
-  color: var(--secundario);
-}
-
 .contato-links {
   display: flex;
   flex-direction: column;
@@ -671,7 +626,6 @@ button { font-family: inherit; cursor: pointer; }
    ============================================ */
 @media (max-width: 860px) {
   .topo-menu { display: none; }
-  .topo-drive { display: none; }
   .topo-hamburguer { display: flex; }
 
   .sobre-grade { grid-template-columns: 1fr; }

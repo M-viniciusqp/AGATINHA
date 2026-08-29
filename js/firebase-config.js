@@ -2,9 +2,9 @@
  * CONFIGURAÇÃO DO FIREBASE
  * -------------------------
  * 1. Crie um projeto grátis em https://console.firebase.google.com
- * 2. Ative: Authentication (Email/Senha) e Firestore Database
- *    (NÃO precisa ativar o Storage — ele agora exige plano pago.
- *    As imagens de capa entram por link, veja o README.md)
+ * 2. Ative: Firestore Database (não precisa de Authentication —
+ *    o painel admin não pede mais login. Veja o README.md pra
+ *    entender o que isso significa em termos de segurança).
  * 3. Copie as chaves do seu projeto (Configurações do projeto > Geral >
  *    "Seus apps" > SDK setup) e cole aqui embaixo.
  *
@@ -25,4 +25,3 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
-const auth = firebase.auth();

@@ -1,72 +1,138 @@
 /**
  * LÓGICA DO PAINEL ADMIN
- * Login com Firebase Auth (e-mail/senha) + CRUD da coleção "projetos"
- * no Firestore. A imagem de capa entra por link (sem Storage, que
- * agora exige plano pago).
+ * Sem login — o painel abre direto (veja o README.md pra entender
+ * o que isso significa em termos de segurança).
+ *
+ * Três coisas editáveis, todas salvas no Firestore:
+ * 1) Configurações do site (bio, fotos, contato) → configuracao/site
+ * 2) Categorias (lista livre, criada por você) → configuracao/site.categorias
+ * 3) Projetos (coleção "projetos", como antes)
  */
 
 let projetosCache = [];
+let categoriasCache = [];
+
+const CONFIG_REF = db.collection("configuracao").doc("site");
 
 document.addEventListener("DOMContentLoaded", () => {
-  montarSelectCategorias();
-  configurarLogin();
+  configurarConfiguracoesSite();
+  configurarCategorias();
   configurarPreviewImagemUrl();
   configurarFormularioProjeto();
   configurarCancelarEdicao();
+  escutarProjetos();
 });
 
-/* ---------- Autenticação ---------- */
-function configurarLogin() {
-  const form = document.getElementById("formularioLogin");
-  const erro = document.getElementById("loginErro");
+/* ---------- Configurações gerais do site ---------- */
+function configurarConfiguracoesSite() {
+  CONFIG_REF.get().then((doc) => {
+    const dados = doc.exists ? doc.data() : {};
+    document.getElementById("configBio").value = dados.bio || "";
+    document.getElementById("configFotoSobre").value = dados.fotoSobre || "";
+    document.getElementById("configFotoTopo").value = dados.fotoTopo || "";
+    document.getElementById("configWhatsapp").value = dados.whatsapp || "";
+    document.getElementById("configInstagram").value = dados.instagram || "";
+    document.getElementById("configEmail").value = dados.email || "";
+  });
 
-  form.addEventListener("submit", (e) => {
+  const form = document.getElementById("formularioConfig");
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    erro.textContent = "";
-    const email = document.getElementById("loginEmail").value.trim();
-    const senha = document.getElementById("loginSenha").value;
+    const status = document.getElementById("configStatus");
+    const botao = document.getElementById("botaoSalvarConfig");
+    botao.disabled = true;
+    status.textContent = "Salvando…";
 
-    auth.signInWithEmailAndPassword(email, senha).catch((err) => {
-      erro.textContent = traduzirErroAuth(err.code);
-    });
-  });
-
-  document.getElementById("botaoSair").addEventListener("click", () => {
-    auth.signOut();
-  });
-
-  auth.onAuthStateChanged((usuario) => {
-    const telaLogin = document.getElementById("telaLogin");
-    const telaPainel = document.getElementById("telaPainel");
-    if (usuario) {
-      telaLogin.hidden = true;
-      telaPainel.hidden = false;
-      escutarProjetos();
-    } else {
-      telaLogin.hidden = false;
-      telaPainel.hidden = true;
+    try {
+      await CONFIG_REF.set(
+        {
+          bio: document.getElementById("configBio").value.trim(),
+          fotoSobre: document.getElementById("configFotoSobre").value.trim(),
+          fotoTopo: document.getElementById("configFotoTopo").value.trim(),
+          whatsapp: document.getElementById("configWhatsapp").value.trim(),
+          instagram: document.getElementById("configInstagram").value.trim(),
+          email: document.getElementById("configEmail").value.trim(),
+        },
+        { merge: true }
+      );
+      status.textContent = "Configurações salvas!";
+    } catch (err) {
+      console.error(err);
+      status.textContent = "Erro ao salvar. Tente novamente.";
+    } finally {
+      botao.disabled = false;
     }
   });
 }
 
-function traduzirErroAuth(code) {
-  const mapa = {
-    "auth/invalid-email": "E-mail inválido.",
-    "auth/user-not-found": "Usuário não encontrado.",
-    "auth/wrong-password": "Senha incorreta.",
-    "auth/invalid-credential": "E-mail ou senha incorretos.",
-    "auth/too-many-requests": "Muitas tentativas. Tente de novo em instantes.",
-  };
-  return mapa[code] || "Não foi possível entrar. Confira os dados.";
+/* ---------- Categorias (lista livre) ---------- */
+function configurarCategorias() {
+  CONFIG_REF.onSnapshot((doc) => {
+    const dados = doc.exists ? doc.data() : {};
+    categoriasCache = dados.categorias || [];
+    renderizarCategorias();
+    montarSelectCategorias();
+  });
+
+  document.getElementById("formularioCategoria").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const input = document.getElementById("campoNovaCategoria");
+    const nome = input.value.trim();
+    if (!nome) return;
+    if (categoriasCache.includes(nome)) {
+      input.value = "";
+      return;
+    }
+    input.value = "";
+    await CONFIG_REF.set(
+      { categorias: firebase.firestore.FieldValue.arrayUnion(nome) },
+      { merge: true }
+    );
+  });
 }
 
-/* ---------- Categorias no select ---------- */
+function renderizarCategorias() {
+  const container = document.getElementById("listaCategorias");
+  const vazio = document.getElementById("categoriasVazio");
+
+  if (categoriasCache.length === 0) {
+    container.innerHTML = "";
+    vazio.hidden = false;
+    return;
+  }
+  vazio.hidden = true;
+
+  container.innerHTML = categoriasCache
+    .map(
+      (cat) => `
+      <span class="admin-tag">
+        ${escapeHtmlAdmin(cat)}
+        <button type="button" data-remover-categoria="${escapeHtmlAdmin(cat)}" aria-label="Remover categoria">✕</button>
+      </span>`
+    )
+    .join("");
+
+  container.querySelectorAll("[data-remover-categoria]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const nome = btn.dataset.removerCategoria;
+      const confirmar = confirm(`Remover a categoria "${nome}"? Projetos que já usam ela mantêm o nome salvo, só não aparece mais na lista pra escolher.`);
+      if (!confirmar) return;
+      await CONFIG_REF.set(
+        { categorias: firebase.firestore.FieldValue.arrayRemove(nome) },
+        { merge: true }
+      );
+    });
+  });
+}
+
 function montarSelectCategorias() {
   const select = document.getElementById("campoCategoria");
   if (!select) return;
-  select.innerHTML = siteConfig.categorias
-    .map((c) => `<option value="${c}">${c}</option>`)
-    .join("");
+  const atual = select.value;
+  select.innerHTML =
+    `<option value="">Sem categoria</option>` +
+    categoriasCache.map((c) => `<option value="${escapeHtmlAdmin(c)}">${escapeHtmlAdmin(c)}</option>`).join("");
+  select.value = atual;
 }
 
 /* ---------- Pré-visualização da imagem (a partir do link colado) ---------- */
@@ -113,8 +179,8 @@ function renderizarListaAdmin() {
       <div class="admin-lista-item">
         <div class="admin-lista-thumb" style="background-image:url('${p.imagemUrl || ""}')"></div>
         <div>
-          <div class="admin-lista-info-titulo">${p.titulo || "Sem título"}</div>
-          <div class="admin-lista-info-sub">${p.categoria || "—"} · ${p.ano || "—"}${p.destaque ? " · destaque" : ""}</div>
+          <div class="admin-lista-info-titulo">${escapeHtmlAdmin(p.titulo || "Sem título")}</div>
+          <div class="admin-lista-info-sub">${escapeHtmlAdmin(p.categoria || "Sem categoria")} · ${p.ano || "—"}</div>
         </div>
         <div class="admin-lista-acoes">
           <button type="button" data-editar="${p.id}">Editar</button>
@@ -142,16 +208,15 @@ function configurarFormularioProjeto() {
     status.textContent = "";
 
     const id = document.getElementById("projetoId").value;
+    const anoValor = document.getElementById("campoAno").value;
     const dados = {
       titulo: document.getElementById("campoTitulo").value.trim(),
       cliente: document.getElementById("campoCliente").value.trim(),
       categoria: document.getElementById("campoCategoria").value,
-      ano: Number(document.getElementById("campoAno").value),
+      ano: anoValor ? Number(anoValor) : null,
       descricao: document.getElementById("campoDescricao").value.trim(),
-      driveLink: document.getElementById("campoDriveProjeto").value.trim(),
       videoUrl: document.getElementById("campoVideo").value.trim(),
       imagemUrl: document.getElementById("campoImagemUrl").value.trim(),
-      destaque: document.getElementById("campoDestaque").checked,
       ordem: Number(document.getElementById("campoOrdem").value) || 0,
       atualizadoEm: firebase.firestore.FieldValue.serverTimestamp(),
     };
@@ -185,14 +250,13 @@ function preencherFormularioParaEdicao(id) {
   document.getElementById("projetoId").value = p.id;
   document.getElementById("campoTitulo").value = p.titulo || "";
   document.getElementById("campoCliente").value = p.cliente || "";
-  document.getElementById("campoCategoria").value = p.categoria || siteConfig.categorias[0];
-  document.getElementById("campoAno").value = p.ano || new Date().getFullYear();
+  montarSelectCategorias();
+  document.getElementById("campoCategoria").value = p.categoria || "";
+  document.getElementById("campoAno").value = p.ano || "";
   document.getElementById("campoDescricao").value = p.descricao || "";
-  document.getElementById("campoDriveProjeto").value = p.driveLink || "";
   document.getElementById("campoVideo").value = p.videoUrl || "";
-  document.getElementById("campoDestaque").checked = !!p.destaque;
-  document.getElementById("campoOrdem").value = p.ordem || 0;
   document.getElementById("campoImagemUrl").value = p.imagemUrl || "";
+  document.getElementById("campoOrdem").value = p.ordem || 0;
 
   const preview = document.getElementById("previewImagem");
   const previewTag = document.getElementById("previewImagemTag");
@@ -229,4 +293,10 @@ async function excluirProjeto(id) {
     console.error(err);
     alert("Não foi possível excluir. Tente novamente.");
   }
+}
+
+function escapeHtmlAdmin(texto) {
+  const div = document.createElement("div");
+  div.textContent = texto;
+  return div.innerHTML;
 }

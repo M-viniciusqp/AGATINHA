@@ -175,6 +175,58 @@
   color: var(--claro-fraco);
 }
 
+.admin-form-linha-categoria {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.admin-form-linha-categoria input {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  background: var(--vidro);
+  border: var(--borda);
+  border-radius: 8px;
+  color: var(--claro);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+}
+.admin-form-linha-categoria input:focus { border-color: var(--secundario); }
+.admin-form-linha-categoria .botao-form {
+  align-self: stretch;
+  padding: 0.9rem 1.5rem;
+}
+
+.admin-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.admin-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  background: var(--vidro);
+  border: var(--borda);
+  border-radius: 999px;
+  color: var(--claro);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.admin-tag button {
+  background: none;
+  border: none;
+  color: var(--claro-fraco);
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  transition: all 0.2s ease;
+}
+.admin-tag button:hover { background: #f87171; color: #fff; }
+
 /* ---------- LISTA DE PROJETOS ---------- */
 .admin-lista { display: flex; flex-direction: column; }
 

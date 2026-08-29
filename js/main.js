@@ -1,63 +1,41 @@
 /**
  * LÓGICA DO SITE PÚBLICO
- * Lê os textos de siteConfig (config.js) e os projetos do Firestore
- * (coleção "projetos", escrita apenas pelo painel admin).
+ * Lê nome/cargo/tagline/serviços de siteConfig (config.js) e o resto
+ * (bio, fotos, contato, categorias, projetos) do Firestore — tudo
+ * editável pelo painel admin, sem precisar mexer em código.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  aplicarConfig();
-  montarFiltros();
+  aplicarConfigEstatico();
   configurarMenuMobile();
   configurarPreviewFlutuante();
   configurarModal();
   configurarFormularioContato();
+  escutarConfiguracaoSite();
   carregarProjetos();
 });
 
 let todosProjetos = [];
 let categoriaAtiva = "todos";
+let categoriasDisponiveis = [];
+let configuracaoSite = {};
 
-/* ---------- Config estático (texto/links) ---------- */
-function aplicarConfig() {
+const CONFIG_REF = db.collection("configuracao").doc("site");
+
+/* ---------- O que vem do config.js (fixo) ---------- */
+function aplicarConfigEstatico() {
   document.title = `${siteConfig.nome} — ${siteConfig.cargo}`;
 
   set("marcaNome", siteConfig.nome);
   set("heroNome", siteConfig.nome);
   set("heroTagline", siteConfig.tagline);
   set("sobreEyebrow", siteConfig.bioTitulo);
-  set("sobreParagrafo", siteConfig.bio);
   set("rodapeNome", `${siteConfig.nome} · ${siteConfig.cargo}`);
   set("rodapeAno", `© ${siteConfig.anoFundacao}–${new Date().getFullYear()}`);
 
-  const foto = document.getElementById("sobreFoto");
-  if (foto) foto.src = siteConfig.fotoSobre;
-
   const servicosEl = document.getElementById("sobreServicos");
   if (servicosEl) {
-    servicosEl.innerHTML = siteConfig.servicos
-      .map((s) => `<li>${s}</li>`)
-      .join("");
-  }
-
-  ["botaoDriveTopo", "botaoDriveMobile", "botaoDriveContato"].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.href = siteConfig.driveLink;
-  });
-
-  const linkEmail = document.getElementById("linkEmail");
-  if (linkEmail) {
-    linkEmail.href = `mailto:${siteConfig.email}`;
-    linkEmail.textContent = siteConfig.email;
-  }
-  const linkInsta = document.getElementById("linkInstagram");
-  if (linkInsta) linkInsta.href = siteConfig.instagram;
-
-  const trilha = document.getElementById("marqueeTrilha");
-  if (trilha) {
-    const itens = [...siteConfig.categorias, ...siteConfig.categorias]
-      .map((c) => `<span>${c}</span>`)
-      .join("");
-    trilha.innerHTML = itens;
+    servicosEl.innerHTML = siteConfig.servicos.map((s) => `<li>${s}</li>`).join("");
   }
 }
 
@@ -66,11 +44,58 @@ function set(id, texto) {
   if (el) el.textContent = texto;
 }
 
-/* ---------- Filtros de categoria ---------- */
+/* ---------- O que vem do Firestore (editável no painel) ---------- */
+function escutarConfiguracaoSite() {
+  CONFIG_REF.onSnapshot((doc) => {
+    configuracaoSite = doc.exists ? doc.data() : {};
+    aplicarConfiguracaoSite();
+
+    const novasCategorias = configuracaoSite.categorias || [];
+    if (JSON.stringify(novasCategorias) !== JSON.stringify(categoriasDisponiveis)) {
+      categoriasDisponiveis = novasCategorias;
+      montarFiltros();
+      renderizarProjetos();
+    }
+  });
+}
+
+function aplicarConfiguracaoSite() {
+  const bioEl = document.getElementById("sobreParagrafo");
+  if (bioEl) bioEl.textContent = configuracaoSite.bio || "";
+
+  const foto = document.getElementById("sobreFoto");
+  if (foto) foto.src = configuracaoSite.fotoSobre || "";
+
+  const fundo = document.getElementById("heroFundo");
+  if (fundo) {
+    fundo.style.backgroundImage = configuracaoSite.fotoTopo
+      ? `url('${configuracaoSite.fotoTopo}')`
+      : "none";
+  }
+
+  const linkEmail = document.getElementById("linkEmail");
+  if (linkEmail && configuracaoSite.email) {
+    linkEmail.href = `mailto:${configuracaoSite.email}`;
+    linkEmail.textContent = configuracaoSite.email;
+  }
+  const linkInsta = document.getElementById("linkInstagram");
+  if (linkInsta && configuracaoSite.instagram) linkInsta.href = configuracaoSite.instagram;
+
+  const trilha = document.getElementById("marqueeTrilha");
+  if (trilha) {
+    const cats = configuracaoSite.categorias || [];
+    const itens = [...cats, ...cats].map((c) => `<span>${escapeHtml(c)}</span>`).join("");
+    trilha.innerHTML = itens;
+  }
+}
+
+/* ---------- Filtros de categoria (dinâmicos) ---------- */
 function montarFiltros() {
   const container = document.getElementById("filtros");
   if (!container) return;
-  siteConfig.categorias.forEach((cat) => {
+
+  container.innerHTML = `<button class="filtro-botao ativo" data-categoria="todos">Todos</button>`;
+  categoriasDisponiveis.forEach((cat) => {
     const btn = document.createElement("button");
     btn.className = "filtro-botao";
     btn.dataset.categoria = cat;
@@ -78,7 +103,7 @@ function montarFiltros() {
     container.appendChild(btn);
   });
 
-  container.addEventListener("click", (e) => {
+  container.onclick = (e) => {
     const btn = e.target.closest(".filtro-botao");
     if (!btn) return;
     categoriaAtiva = btn.dataset.categoria;
@@ -86,10 +111,10 @@ function montarFiltros() {
       .querySelectorAll(".filtro-botao")
       .forEach((b) => b.classList.toggle("ativo", b === btn));
     renderizarProjetos();
-  });
+  };
 }
 
-/* ---------- Firestore ---------- */
+/* ---------- Firestore: projetos ---------- */
 function carregarProjetos() {
   db.collection("projetos")
     .orderBy("ordem", "asc")
@@ -97,7 +122,6 @@ function carregarProjetos() {
       (snapshot) => {
         todosProjetos = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         renderizarProjetos();
-        montarHeroFundo();
       },
       (erro) => {
         console.error("Erro ao carregar projetos:", erro);
@@ -119,7 +143,7 @@ function renderizarProjetos() {
       : todosProjetos.filter((p) => p.categoria === categoriaAtiva);
 
   if (filtrados.length === 0) {
-    lista.innerHTML = `<li class="trabalhos-vazio">Nenhum projeto nessa categoria ainda.</li>`;
+    lista.innerHTML = `<li class="trabalhos-vazio">Nenhum projeto por aqui ainda.</li>`;
     return;
   }
 
@@ -143,22 +167,6 @@ function renderizarProjetos() {
   lista.querySelectorAll(".trabalho-item").forEach((item) => {
     item.addEventListener("click", () => abrirModal(item.dataset.id));
   });
-}
-
-function montarHeroFundo() {
-  const fundo = document.getElementById("heroFundo");
-  if (!fundo) return;
-  const destaques = todosProjetos.filter((p) => p.destaque && p.imagemUrl);
-  const lista = destaques.length ? destaques : todosProjetos.filter((p) => p.imagemUrl);
-  if (!lista.length) return;
-
-  let indice = 0;
-  const aplicar = () => {
-    fundo.style.backgroundImage = `url('${lista[indice].imagemUrl}')`;
-    indice = (indice + 1) % lista.length;
-  };
-  aplicar();
-  if (lista.length > 1) setInterval(aplicar, 5000);
 }
 
 /* ---------- Preview flutuante (segue o cursor, só desktop) ---------- */
@@ -201,6 +209,15 @@ function configurarModal() {
   });
 }
 
+function extrairEmbedVideo(url) {
+  if (!url) return null;
+  const youtube = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{6,})/);
+  if (youtube) return `https://www.youtube.com/embed/${youtube[1]}`;
+  const vimeo = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
+  return null;
+}
+
 function abrirModal(id) {
   const projeto = todosProjetos.find((p) => p.id === id);
   if (!projeto) return;
@@ -208,21 +225,25 @@ function abrirModal(id) {
   document.getElementById("modalCategoria").textContent = projeto.categoria || "";
   document.getElementById("modalTitulo").textContent = projeto.titulo || "";
   document.getElementById("modalDescricao").textContent = projeto.descricao || "";
-  document.getElementById("modalImagem").style.backgroundImage = projeto.imagemUrl
-    ? `url('${projeto.imagemUrl}')`
-    : "none";
 
-  const driveBtn = document.getElementById("modalDriveLink");
-  if (projeto.driveLink) {
-    driveBtn.href = projeto.driveLink;
-    driveBtn.hidden = false;
+  const modalImagem = document.getElementById("modalImagem");
+  const embedVideo = extrairEmbedVideo(projeto.videoUrl);
+  if (embedVideo) {
+    modalImagem.style.backgroundImage = "none";
+    modalImagem.innerHTML = `<iframe src="${embedVideo}" title="${escapeHtml(projeto.titulo || "Vídeo do projeto")}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
   } else {
-    driveBtn.hidden = true;
+    modalImagem.innerHTML = "";
+    modalImagem.style.backgroundImage = projeto.imagemUrl ? `url('${projeto.imagemUrl}')` : "none";
   }
 
   const videoBtn = document.getElementById("modalVideoLink");
-  if (projeto.videoUrl) {
+  if (projeto.videoUrl && !embedVideo) {
     videoBtn.href = projeto.videoUrl;
+    videoBtn.textContent = "Assistir vídeo ↗";
+    videoBtn.hidden = false;
+  } else if (projeto.videoUrl && embedVideo) {
+    videoBtn.href = projeto.videoUrl;
+    videoBtn.textContent = "Abrir no YouTube/Vimeo ↗";
     videoBtn.hidden = false;
   } else {
     videoBtn.hidden = true;
@@ -268,7 +289,8 @@ function configurarFormularioContato() {
     if (empresa) texto += `, da ${empresa}`;
     texto += `. ${mensagem}`;
 
-    const url = `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(texto)}`;
+    const numero = configuracaoSite.whatsapp || "";
+    const url = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
     window.open(url, "_blank");
   });
 }

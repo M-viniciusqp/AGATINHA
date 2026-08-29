@@ -15,34 +15,71 @@
 </head>
 <body class="admin-body">
 
-<!-- TELA DE LOGIN -->
-<section class="admin-login" id="telaLogin">
-  <form class="admin-login-caixa" id="formularioLogin">
-    <p class="admin-login-eyebrow">Painel do portfólio</p>
-    <h1 class="admin-login-titulo">Entrar</h1>
-    <div class="grupo-form">
-      <input type="email" placeholder="E-mail" id="loginEmail" required>
-    </div>
-    <div class="grupo-form">
-      <input type="password" placeholder="Senha" id="loginSenha" required>
-    </div>
-    <button type="submit" class="botao-form">Entrar</button>
-    <p class="admin-login-erro" id="loginErro"></p>
-  </form>
-</section>
-
-<!-- PAINEL (só aparece após login) -->
-<section class="admin-painel" id="telaPainel" hidden>
+<section class="admin-painel" id="telaPainel">
 
   <header class="admin-topo">
-    <span class="admin-topo-titulo">Gerenciar projetos</span>
+    <span class="admin-topo-titulo">Gerenciar portfólio</span>
     <div class="admin-topo-acoes">
       <a href="index.html" target="_blank">Ver site ↗</a>
-      <button id="botaoSair" class="admin-botao-sair">Sair</button>
     </div>
   </header>
 
   <div class="admin-conteudo">
+
+    <!-- Configurações gerais do site -->
+    <div class="admin-cartao">
+      <h2 class="admin-cartao-titulo">Configurações do site</h2>
+      <form id="formularioConfig" class="admin-form">
+        <div class="grupo-form">
+          <label>Sobre (texto da seção "Sobre")</label>
+          <textarea id="configBio" rows="5"></textarea>
+        </div>
+
+        <div class="admin-form-linha">
+          <div class="grupo-form">
+            <label>Foto da seção "Sobre" (link da imagem) — opcional</label>
+            <input type="url" id="configFotoSobre" placeholder="https://...">
+          </div>
+          <div class="grupo-form">
+            <label>Foto de fundo do topo (hero) — opcional</label>
+            <input type="url" id="configFotoTopo" placeholder="https://...">
+          </div>
+        </div>
+
+        <div class="admin-form-linha">
+          <div class="grupo-form">
+            <label>WhatsApp (DDI+DDD+número, só números)</label>
+            <input type="text" id="configWhatsapp" placeholder="5598999999999">
+          </div>
+          <div class="grupo-form">
+            <label>Instagram (link completo)</label>
+            <input type="url" id="configInstagram" placeholder="https://instagram.com/seuinsta">
+          </div>
+        </div>
+
+        <div class="grupo-form">
+          <label>E-mail de contato</label>
+          <input type="email" id="configEmail" placeholder="contato@exemplo.com">
+        </div>
+
+        <div class="admin-form-acoes">
+          <button type="submit" class="botao-form" id="botaoSalvarConfig">Salvar configurações</button>
+        </div>
+        <p class="admin-form-status" id="configStatus"></p>
+      </form>
+    </div>
+
+    <!-- Categorias -->
+    <div class="admin-cartao">
+      <h2 class="admin-cartao-titulo">Categorias</h2>
+      <form id="formularioCategoria" class="admin-form-linha-categoria">
+        <input type="text" id="campoNovaCategoria" placeholder="Nome da categoria (ex: Campanhas)">
+        <button type="submit" class="botao-form">Adicionar</button>
+      </form>
+      <div class="admin-tags" id="listaCategorias">
+        <p class="admin-lista-vazio" id="categoriasVazio">Nenhuma categoria ainda — crie a primeira acima.</p>
+      </div>
+    </div>
 
     <!-- Formulário de novo / editar projeto -->
     <div class="admin-cartao">
@@ -56,19 +93,21 @@
             <input type="text" id="campoTitulo" required>
           </div>
           <div class="grupo-form">
-            <label>Cliente / marca</label>
+            <label>Cliente / marca (opcional)</label>
             <input type="text" id="campoCliente">
           </div>
         </div>
 
         <div class="admin-form-linha">
           <div class="grupo-form">
-            <label>Categoria</label>
-            <select id="campoCategoria" required></select>
+            <label>Categoria (opcional)</label>
+            <select id="campoCategoria">
+              <option value="">Sem categoria</option>
+            </select>
           </div>
           <div class="grupo-form">
-            <label>Ano</label>
-            <input type="number" id="campoAno" min="2000" max="2100" required>
+            <label>Ano (opcional)</label>
+            <input type="number" id="campoAno" min="2000" max="2100">
           </div>
         </div>
 
@@ -77,19 +116,13 @@
           <textarea id="campoDescricao" rows="3"></textarea>
         </div>
 
-        <div class="admin-form-linha">
-          <div class="grupo-form">
-            <label>Link do Drive (galeria completa deste projeto)</label>
-            <input type="url" id="campoDriveProjeto" placeholder="https://drive.google.com/...">
-          </div>
-          <div class="grupo-form">
-            <label>Link do vídeo (YouTube/Vimeo/Drive) — opcional</label>
-            <input type="url" id="campoVideo" placeholder="https://...">
-          </div>
+        <div class="grupo-form">
+          <label>Link do vídeo (YouTube/Vimeo) — opcional, toca embutido no site</label>
+          <input type="url" id="campoVideo" placeholder="https://youtube.com/watch?v=...">
         </div>
 
         <div class="grupo-form">
-          <label>Link da imagem de capa</label>
+          <label>Link da imagem de capa (opcional)</label>
           <input type="url" id="campoImagemUrl" placeholder="https://... (link direto da imagem)">
           <p class="admin-dica">Cole um link direto de imagem. Formas fáceis de gerar isso: suba a foto no Google Drive → botão direito → "Compartilhar" → "Qualquer pessoa com o link" → depois use um conversor tipo <a href="https://sites.google.com/site/gdocs2direct/" target="_blank" rel="noopener">gdocs2direct</a> pra transformar em link direto de imagem. Ou use um site grátis como <a href="https://imgbb.com" target="_blank" rel="noopener">imgbb.com</a>, que já te dá o link direto na hora.</p>
           <div class="admin-preview-imagem" id="previewImagem" hidden>
@@ -97,14 +130,9 @@
           </div>
         </div>
 
-        <div class="admin-form-linha admin-form-linha-final">
-          <div class="grupo-form grupo-form-checkbox">
-            <label><input type="checkbox" id="campoDestaque"> Mostrar no plano de fundo do topo (destaque)</label>
-          </div>
-          <div class="grupo-form">
-            <label>Ordem de exibição</label>
-            <input type="number" id="campoOrdem" min="0" step="1">
-          </div>
+        <div class="grupo-form">
+          <label>Ordem de exibição</label>
+          <input type="number" id="campoOrdem" min="0" step="1">
         </div>
 
         <div class="admin-form-acoes">
@@ -127,7 +155,6 @@
 </section>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <script src="js/config.js"></script>
 <script src="js/firebase-config.js"></script>

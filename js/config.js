@@ -1,8 +1,11 @@
 /**
  * CONFIGURAÇÃO DO SITE
  * ---------------------
- * Edite só este arquivo pra trocar textos, links e categorias.
- * Não precisa mexer no HTML nem no CSS pra isso.
+ * Edite este arquivo pra trocar nome, cargo, tagline e os "chips" de
+ * serviço. Tudo o mais (bio, foto, WhatsApp, Instagram, e-mail, foto
+ * de fundo do topo e as categorias) agora é editado dentro do painel
+ * admin, e fica salvo no banco de dados — não precisa mexer em código
+ * pra isso.
  */
 
 const siteConfig = {
@@ -10,11 +13,7 @@ const siteConfig = {
   nome: "Ágata Costa",
   cargo: "Publicidade & Propaganda",
   tagline: "Ideias que viram campanha.",
-
-  // Sobre
   bioTitulo: "Sobre",
-  bio: "Estudante de Publicidade e Propaganda, com experiência em Social Media e Filmmaker Mobile. Desenvolvo conteúdos e projetos criativos que conectam marcas e pessoas, unindo estratégia, comunicação e audiovisual. Meu trabalho envolve criação de conteúdo, planejamento estratégico e produção audiovisual, sempre buscando transformar ideias em narrativas relevantes, fortalecer a identidade das marcas e gerar resultados.",
-  fotoSobre: "img/foto-sobre.jpg",
 
   servicos: [
     "Direção de Arte",
@@ -24,19 +23,6 @@ const siteConfig = {
     "Identidade Visual",
     "Branded Content"
   ],
-
-  // Categorias usadas nos filtros do portfólio (têm que bater com o
-  // campo "categoria" salvo em cada projeto no painel admin)
-  categorias: ["Campanhas", "Vídeo", "Arte", "Social Media"],
-
-  // Botão grande de acesso ao acervo completo (Google Drive)
-  driveLink: "https://drive.google.com/drive/folders/SEU_ID_AQUI",
-  driveTexto: "Ver acervo completo no Drive",
-
-  // Contato
-  email: "contato@exemplo.com",
-  whatsapp: "5598999999999", // DDI+DDD+número, só números
-  instagram: "https://instagram.com/seuinsta",
 
   // Rodapé
   anoFundacao: 2025
