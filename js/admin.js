@@ -17,6 +17,7 @@ const CONFIG_REF = db.collection("configuracao").doc("site");
 document.addEventListener("DOMContentLoaded", () => {
   configurarConfiguracoesSite();
   configurarCategorias();
+  configurarSelectCategoriaCustom();
   configurarPreviewImagemUrl();
   configurarFormularioProjeto();
   configurarCancelarEdicao();
@@ -126,13 +127,62 @@ function renderizarCategorias() {
 }
 
 function montarSelectCategorias() {
-  const select = document.getElementById("campoCategoria");
-  if (!select) return;
-  const atual = select.value;
-  select.innerHTML =
-    `<option value="">Sem categoria</option>` +
-    categoriasCache.map((c) => `<option value="${escapeHtmlAdmin(c)}">${escapeHtmlAdmin(c)}</option>`).join("");
-  select.value = atual;
+  const lista = document.getElementById("categoriaSelectLista");
+  const hidden = document.getElementById("campoCategoria");
+  if (!lista || !hidden) return;
+
+  const opcoes = ["", ...categoriasCache];
+  lista.innerHTML = opcoes
+    .map((c) => {
+      const rotulo = c === "" ? "Sem categoria" : escapeHtmlAdmin(c);
+      const selecionada = c === hidden.value ? "selecionada" : "";
+      return `<li data-valor="${escapeHtmlAdmin(c)}" class="${selecionada}">${rotulo}</li>`;
+    })
+    .join("");
+
+  lista.querySelectorAll("li").forEach((item) => {
+    item.addEventListener("click", () => {
+      definirCategoriaSelecionada(item.dataset.valor);
+      fecharSelectCategoria();
+    });
+  });
+
+  // Se a categoria atual não existe mais na lista, mostra "Sem categoria"
+  if (hidden.value && !categoriasCache.includes(hidden.value)) {
+    definirCategoriaSelecionada(hidden.value); // mantém o texto salvo mesmo assim
+  }
+}
+
+function definirCategoriaSelecionada(valor) {
+  document.getElementById("campoCategoria").value = valor;
+  document.getElementById("categoriaSelectTexto").textContent = valor || "Sem categoria";
+}
+
+function configurarSelectCategoriaCustom() {
+  const botao = document.getElementById("categoriaSelectBotao");
+  const lista = document.getElementById("categoriaSelectLista");
+  if (!botao || !lista) return;
+
+  botao.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const abrindo = lista.hidden;
+    lista.hidden = !abrindo;
+    botao.classList.toggle("aberto", abrindo);
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!document.getElementById("categoriaSelectCustom").contains(e.target)) {
+      fecharSelectCategoria();
+    }
+  });
+}
+
+function fecharSelectCategoria() {
+  const botao = document.getElementById("categoriaSelectBotao");
+  const lista = document.getElementById("categoriaSelectLista");
+  if (!botao || !lista) return;
+  lista.hidden = true;
+  botao.classList.remove("aberto");
 }
 
 /* ---------- Pré-visualização da imagem (a partir do link colado) ---------- */
@@ -251,7 +301,7 @@ function preencherFormularioParaEdicao(id) {
   document.getElementById("campoTitulo").value = p.titulo || "";
   document.getElementById("campoCliente").value = p.cliente || "";
   montarSelectCategorias();
-  document.getElementById("campoCategoria").value = p.categoria || "";
+  definirCategoriaSelecionada(p.categoria || "");
   document.getElementById("campoAno").value = p.ano || "";
   document.getElementById("campoDescricao").value = p.descricao || "";
   document.getElementById("campoVideo").value = p.videoUrl || "";
@@ -279,6 +329,7 @@ function configurarCancelarEdicao() {
 function resetarFormulario() {
   document.getElementById("formularioProjeto").reset();
   document.getElementById("projetoId").value = "";
+  definirCategoriaSelecionada("");
   document.getElementById("previewImagem").hidden = true;
   document.getElementById("formTitulo").textContent = "Novo projeto";
   document.getElementById("botaoCancelarEdicao").hidden = true;

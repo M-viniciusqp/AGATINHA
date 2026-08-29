@@ -101,9 +101,14 @@
         <div class="admin-form-linha">
           <div class="grupo-form">
             <label>Categoria (opcional)</label>
-            <select id="campoCategoria">
-              <option value="">Sem categoria</option>
-            </select>
+            <div class="select-custom" id="categoriaSelectCustom">
+              <button type="button" class="select-custom-botao" id="categoriaSelectBotao">
+                <span id="categoriaSelectTexto">Sem categoria</span>
+                <span class="select-custom-seta">▾</span>
+              </button>
+              <ul class="select-custom-lista" id="categoriaSelectLista" hidden></ul>
+              <input type="hidden" id="campoCategoria" value="">
+            </div>
           </div>
           <div class="grupo-form">
             <label>Ano (opcional)</label>

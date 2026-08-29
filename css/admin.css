@@ -141,6 +141,63 @@
 }
 .admin-dica a { color: var(--secundario); text-decoration: underline; }
 
+.select-custom {
+  position: relative;
+}
+
+.select-custom-botao {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+  background: var(--vidro);
+  border: var(--borda);
+  border-radius: 8px;
+  color: var(--claro);
+  font-family: inherit;
+  font-size: 0.95rem;
+  text-align: left;
+  transition: border-color 0.25s ease;
+}
+.select-custom-botao:hover,
+.select-custom-botao.aberto { border-color: var(--secundario); }
+
+.select-custom-seta {
+  color: var(--claro-fraco);
+  font-size: 0.75rem;
+  transition: transform 0.25s ease;
+}
+.select-custom-botao.aberto .select-custom-seta { transform: rotate(180deg); }
+
+.select-custom-lista {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  list-style: none;
+  max-height: 220px;
+  overflow-y: auto;
+  background: var(--escuro);
+  border: var(--borda);
+  border-radius: 8px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(14px);
+}
+
+.select-custom-lista li {
+  padding: 0.75rem 1rem;
+  color: var(--claro);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.select-custom-lista li:hover,
+.select-custom-lista li.selecionada {
+  background: linear-gradient(90deg, var(--primario), var(--secundario));
+}
+
 .admin-preview-imagem {
   margin-top: 0.75rem;
   width: 180px;
