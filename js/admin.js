@@ -29,7 +29,6 @@ function configurarConfiguracoesSite() {
   CONFIG_REF.get().then((doc) => {
     const dados = doc.exists ? doc.data() : {};
     document.getElementById("configBio").value = dados.bio || "";
-    document.getElementById("configFotoSobre").value = dados.fotoSobre || "";
     document.getElementById("configFotoTopo").value = dados.fotoTopo || "";
     document.getElementById("configWhatsapp").value = dados.whatsapp || "";
     document.getElementById("configInstagram").value = dados.instagram || "";
@@ -48,7 +47,6 @@ function configurarConfiguracoesSite() {
       await CONFIG_REF.set(
         {
           bio: document.getElementById("configBio").value.trim(),
-          fotoSobre: document.getElementById("configFotoSobre").value.trim(),
           fotoTopo: document.getElementById("configFotoTopo").value.trim(),
           whatsapp: document.getElementById("configWhatsapp").value.trim(),
           instagram: document.getElementById("configInstagram").value.trim(),

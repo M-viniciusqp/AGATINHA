@@ -14,6 +14,7 @@ const siteConfig = {
   cargo: "Publicidade & Propaganda",
   tagline: "Ideias que viram campanha.",
   bioTitulo: "Sobre",
+  fotoSobre: "img/foto-sobre.jpg", // troque o arquivo direto pelo Git/GitHub
 
   servicos: [
     "Direção de Arte",

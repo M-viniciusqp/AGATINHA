@@ -37,6 +37,9 @@ function aplicarConfigEstatico() {
   if (servicosEl) {
     servicosEl.innerHTML = siteConfig.servicos.map((s) => `<li>${s}</li>`).join("");
   }
+
+  const foto = document.getElementById("sobreFoto");
+  if (foto) foto.src = siteConfig.fotoSobre;
 }
 
 function set(id, texto) {
@@ -62,9 +65,6 @@ function escutarConfiguracaoSite() {
 function aplicarConfiguracaoSite() {
   const bioEl = document.getElementById("sobreParagrafo");
   if (bioEl) bioEl.textContent = configuracaoSite.bio || "";
-
-  const foto = document.getElementById("sobreFoto");
-  if (foto) foto.src = configuracaoSite.fotoSobre || "";
 
   const fundo = document.getElementById("heroFundo");
   if (fundo) {
