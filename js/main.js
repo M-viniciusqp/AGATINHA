@@ -154,6 +154,9 @@ function renderizarProjetos() {
   lista.innerHTML = filtrados
     .map((p, i) => {
       const numero = String(i + 1).padStart(2, "0");
+      const thumbInline = p.imagemUrl
+        ? `<div class="trabalho-thumb-inline" style="background-image:url('${p.imagemUrl}')"></div>`
+        : "";
       return `
         <li class="trabalho-item"
             data-id="${p.id}"
@@ -163,7 +166,7 @@ function renderizarProjetos() {
           <span class="trabalho-cliente">${escapeHtml(p.cliente || "")}</span>
           <span class="trabalho-ano">${p.ano || ""}</span>
           <span class="trabalho-seta">→</span>
-          <div class="trabalho-thumb-inline" style="background-image:url('${p.imagemUrl || ""}')"></div>
+          ${thumbInline}
         </li>`;
     })
     .join("");
