@@ -12,7 +12,7 @@ const siteConfig = {
   // Identidade
   nome: "Ágata Costa",
   cargo: "Publicidade & Propaganda",
-  tagline: "Ideias que viram campanha.",
+  tagline: "Boas ideias merecem ser vistas.",
   bioTitulo: "Sobre",
   fotoSobre: "img/foto-sobre.jpg", // troque o arquivo direto pelo Git/GitHub
 
