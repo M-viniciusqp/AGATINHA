@@ -255,7 +255,7 @@ function abrirModal(id) {
   const videoBtn = document.getElementById("modalVideoLink");
   if (projeto.videoUrl && !embedVideo) {
     videoBtn.href = projeto.videoUrl;
-    videoBtn.textContent = "Assistir vídeo ↗";
+    videoBtn.textContent = "Acompanhe meu Trabalho ↗";
     videoBtn.hidden = false;
   } else if (projeto.videoUrl && embedVideo) {
     videoBtn.href = projeto.videoUrl;
